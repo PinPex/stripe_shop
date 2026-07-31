@@ -4,13 +4,9 @@
 
 ### Локальный запуск
 
-#### Режим Debug
-
-В режиме Debug приложение работает с базой данных SQLite.
-
 ```bash
 # 1. Клонировать репозиторий
-git clone 
+git clone https://github.com/PinPex/stripe_shop
 cd stripe_shop
 
 # 2. Создать виртуальное окружение
@@ -28,8 +24,9 @@ cp .env.example .env
 # При выключенном параметре - с PostgreSQL
 # В данном случае необходимо запустить PostgreSQL
 # Проще всего запустить через контейнер в Docker
+
 # 4.1. Создать контейнер для БД PostgreSQL
-docker run --name postgres-stripe -e POSTGRES_PASSWORD=password -e POSTGRES_DB=stripe_db -p 5432:5432 -d postgres:15
+# docker run --name postgres-stripe -e POSTGRES_PASSWORD=password -e POSTGRES_DB=stripe_db -p 5432:5432 -d postgres:15
 
 # 5. Выполнить миграции
 python manage.py makemigrations
@@ -48,6 +45,9 @@ python manage.py runserver
 ### Запуск через Docker
 
 ```bash
+# DEBUG=False: Создать контейнер для БД PostgreSQL
+# docker run --name postgres-stripe -e POSTGRES_PASSWORD=password -e POSTGRES_DB=stripe_db -p 5432:5432 -d postgres:15
+
 docker-compose up --build
 ```
 
@@ -65,7 +65,7 @@ docker-compose up --build
 
 ### Особенности работы с системой Strip
 
-Работа с системой находится в тестовом режиме с тестовыми ключами. 
+Если введены тестовые ключи, то взаимодействие с системой находится в тестовом режиме. 
 Для выполнения оплаты необходимо ввести следующие значения:
 - Адрес электронной почты: любой, например, example@example.com
 - Номер карты: 4242 4242 4242 4242
