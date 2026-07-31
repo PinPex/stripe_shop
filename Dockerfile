@@ -11,4 +11,4 @@ ENV PYTHONUNBUFFERED=1
 
 EXPOSE 8000
 
-CMD ["gunicorn", "stripe_shop.wsgi:application", "--bind", "0.0.0.0:8000"]s
+CMD ["gunicorn", "stripe_shop.wsgi:application", "--bind", "0.0.0.0:8000"]
