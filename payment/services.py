@@ -18,8 +18,8 @@ def create_checkout_session_for_item(item_id):
     secret_key, _ = get_stripe_keys(item.currency)
     stripe.api_key = secret_key
     
-    success_url = f'http://{settings.BASE_URL}/success/'
-    cancel_url = f'http://{settings.BASE_URL}/item/{item.id}/'
+    success_url = f'{settings.BASE_URL}/success/'
+    cancel_url = f'{settings.BASE_URL}/item/{item.id}/'
     
     session = stripe.checkout.Session.create(
         payment_method_types=['card'],
@@ -79,8 +79,8 @@ def create_checkout_session_for_order(order_id):
         payment_method_types=['card'],
         line_items=line_items,
         mode='payment',
-        success_url=f'http://{settings.BASE_URL}/success/',
-        cancel_url=f'http://{settings.BASE_URL}/order/{order.id}/',
+        success_url=f'{settings.BASE_URL}/success/',
+        cancel_url=f'{settings.BASE_URL}/order/{order.id}/',
         discounts=discounts if discounts else None,
         tax_rates=tax_rates if tax_rates else None,
         metadata={'order_id': order.id},
