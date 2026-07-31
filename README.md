@@ -26,6 +26,10 @@ cp .env.example .env
 # Заполнить файл своими значениями
 # При установленном параметре DEBUG=True приложение работает с базой данных SQLite
 # При выключенном параметре - с PostgreSQL
+# В данном случае необходимо запустить PostgreSQL
+# Проще всего запустить через контейнер в Docker
+# 4.1. Создать контейнер для БД PostgreSQL
+docker run --name postgres-stripe -e POSTGRES_PASSWORD=password -e POSTGRES_DB=stripe_db -p 5432:5432 -d postgres:15
 
 # 5. Выполнить миграции
 python manage.py makemigrations
