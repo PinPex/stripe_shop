@@ -1,0 +1,233 @@
+[
+  {
+    "model": "payment.item",
+    "pk": 1,
+    "fields": {
+      "name": "Premium Headphones",
+      "description": "High-quality wireless headphones with noise cancellation and 30-hour battery life.",
+      "price": 19900,
+      "currency": "usd"
+    }
+  },
+  {
+    "model": "payment.item",
+    "pk": 2,
+    "fields": {
+      "name": "Smart Watch Pro",
+      "description": "Advanced smartwatch with heart rate monitor, GPS, and 7-day battery life.",
+      "price": 29900,
+      "currency": "usd"
+    }
+  },
+  {
+    "model": "payment.item",
+    "pk": 3,
+    "fields": {
+      "name": "Mechanical Keyboard",
+      "description": "RGB mechanical keyboard with Cherry MX switches and programmable keys.",
+      "price": 14900,
+      "currency": "usd"
+    }
+  },
+  {
+    "model": "payment.item",
+    "pk": 4,
+    "fields": {
+      "name": "Wireless Mouse",
+      "description": "Ergonomic wireless mouse with 16000 DPI sensor and 70-hour battery.",
+      "price": 7900,
+      "currency": "usd"
+    }
+  },
+  {
+    "model": "payment.item",
+    "pk": 5,
+    "fields": {
+      "name": "USB-C Hub",
+      "description": "7-in-1 USB-C hub with HDMI, Ethernet, and 4K video output.",
+      "price": 4900,
+      "currency": "usd"
+    }
+  },
+  {
+    "model": "payment.item",
+    "pk": 6,
+    "fields": {
+      "name": "Premium Coffee Beans",
+      "description": "100% Arabica coffee beans from Colombia, medium roast, 1kg bag.",
+      "price": 2500,
+      "currency": "eur"
+    }
+  },
+  {
+    "model": "payment.item",
+    "pk": 7,
+    "fields": {
+      "name": "Smartphone Stand",
+      "description": "Adjustable aluminum smartphone stand for desk use.",
+      "price": 2900,
+      "currency": "eur"
+    }
+  },
+  {
+    "model": "payment.item",
+    "pk": 8,
+    "fields": {
+      "name": "Bluetooth Speaker",
+      "description": "Waterproof Bluetooth speaker with 360° sound and 20-hour battery.",
+      "price": 8900,
+      "currency": "eur"
+    }
+  },
+  {
+    "model": "payment.item",
+    "pk": 9,
+    "fields": {
+      "name": "Backpack Laptop Bag",
+      "description": "Water-resistant laptop backpack with USB charging port and 15.6\" compartment.",
+      "price": 6900,
+      "currency": "usd"
+    }
+  },
+  {
+    "model": "payment.item",
+    "pk": 10,
+    "fields": {
+      "name": "Desk Lamp",
+      "description": "LED desk lamp with 5 brightness levels and adjustable arm.",
+      "price": 3900,
+      "currency": "usd"
+    }
+  },
+  {
+    "model": "payment.tax",
+    "pk": 1,
+    "fields": {
+      "name": "Standard VAT",
+      "percentage": 20.00,
+      "stripe_tax_code": "txcd_10000000"
+    }
+  },
+  {
+    "model": "payment.tax",
+    "pk": 2,
+    "fields": {
+      "name": "Reduced VAT",
+      "percentage": 10.00,
+      "stripe_tax_code": "txcd_10000001"
+    }
+  },
+  {
+    "model": "payment.tax",
+    "pk": 3,
+    "fields": {
+      "name": "Digital Tax (EU)",
+      "percentage": 19.00,
+      "stripe_tax_code": "txcd_10000002"
+    }
+  },
+  {
+    "model": "payment.tax",
+    "pk": 4,
+    "fields": {
+      "name": "No Tax",
+      "percentage": 0.00,
+      "stripe_tax_code": null
+    }
+  },
+  {
+    "model": "payment.discount",
+    "pk": 1,
+    "fields": {
+      "name": "Summer Sale",
+      "percent_off": 15.00,
+      "amount_off": null,
+      "currency": null
+    }
+  },
+  {
+    "model": "payment.discount",
+    "pk": 2,
+    "fields": {
+      "name": "First Order Discount",
+      "percent_off": null,
+      "amount_off": 1000,
+      "currency": "usd"
+    }
+  },
+  {
+    "model": "payment.discount",
+    "pk": 3,
+    "fields": {
+      "name": "Holiday Special",
+      "percent_off": 25.00,
+      "amount_off": null,
+      "currency": null
+    }
+  },
+  {
+    "model": "payment.discount",
+    "pk": 4,
+    "fields": {
+      "name": "Clearance Sale",
+      "percent_off": null,
+      "amount_off": 500,
+      "currency": "eur"
+    }
+  },
+  {
+    "model": "payment.order",
+    "pk": 1,
+    "fields": {
+      "items": [1, 2, 3],
+      "tax": 1,
+      "discount": 1,
+      "total_price": 64700,
+      "created_at": "2026-07-27T10:00:00Z"
+    }
+  },
+  {
+    "model": "payment.order",
+    "pk": 2,
+    "fields": {
+      "items": [4, 5, 9],
+      "tax": 2,
+      "discount": 2,
+      "total_price": 19700,
+      "created_at": "2026-07-28T14:30:00Z"
+    }
+  },
+  {
+    "model": "payment.order",
+    "pk": 3,
+    "fields": {
+      "items": [6, 7, 8],
+      "tax": 3,
+      "discount": 4,
+      "total_price": 14300,
+      "created_at": "2026-07-29T09:15:00Z"
+    }
+  },
+  {
+    "model": "payment.order",
+    "pk": 4,
+    "fields": {
+      "items": [1, 10],
+      "tax": null,
+      "discount": 3,
+      "total_price": 23800,
+      "created_at": "2026-07-30T16:45:00Z"
+    }
+  },
+  {
+    "model": "payment.order",
+    "pk": 5,
+    "fields": {
+      "items": [2, 3, 4, 5],
+      "tax": 1,
+      "discount": null,
+      "total_price": 57600,
+      "created_at": "2026-07-31T11:20:00Z"
+    }
+  }
+]

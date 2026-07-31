@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Order #{{ order.id }}</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .order-box { border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
+        .item-list { list-style: none; padding: 0; }
+        .item-list li { padding: 10px 0; border-bottom: 1px solid #eee; }
+        .total { font-size: 24px; font-weight: bold; margin-top: 20px; }
+        button { background: #5469d4; color: white; border: none; padding: 12px 24px; 
+                 border-radius: 4px; font-size: 16px; cursor: pointer; }
+        button:hover { background: #3f4c9a; }
+    </style>
+</head>
+<body>
+    <div class="order-box">
+        <h1>Order #{{ order.id }}</h1>
+        <ul class="item-list">
+            {% for item in order.items.all %}
+                <li>{{ item.name }} - ${{ item.display_price }}</li>
+            {% endfor %}
+        </ul>
+        {% if order.discount %}
+            <p>Discount: {{ order.discount.name }} ({{ order.discount.percent_off }}%)</p>
+        {% endif %}
+        {% if order.tax %}
+            <p>Tax: {{ order.tax.name }} ({{ order.tax.percentage }}%)</p>
+        {% endif %}
+        <p class="total">Total: ${{ total|floatformat:2 }}</p>
+        <button id="buy-button">Pay for Order</button>
+    </div>
+
+    <script>
+        const stripe = Stripe('{{ stripe_pub_key }}');
+        document.getElementById('buy-button').addEventListener('click', function() {
+            fetch('/buy-order/{{ order.id }}/', {method: 'GET'})
+                .then(response => response.json())
+                .then(data => {
+                    if (data.id) {
+                        stripe.redirectToCheckout({ sessionId: data.id })
+                            .then(result => {
+                                if (result.error) {
+                                    alert('Error: ' + result.error.message);
+                                }
+                            });
+                    } else {
+                        alert('Error: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Payment error occurred');
+                });
+        });
+    </script>
+</body>
+</html>

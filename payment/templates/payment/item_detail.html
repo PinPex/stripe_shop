@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Buy {{ item.name }}</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .item-box { border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
+        button { background: #5469d4; color: white; border: none; padding: 12px 24px; 
+                 border-radius: 4px; font-size: 16px; cursor: pointer; }
+        button:hover { background: #3f4c9a; }
+    </style>
+</head>
+<body>
+    <div class="item-box">
+        <h1>{{ item.name }}</h1>
+        <p>{{ item.description }}</p>
+        <p style="font-size: 24px; font-weight: bold;">${{ item.display_price }}</p>
+        <button id="buy-button">Buy Now</button>
+    </div>
+
+    <script>
+        const stripe = Stripe('{{ stripe_pub_key }}');
+        document.getElementById('buy-button').addEventListener('click', function() {
+            fetch('/buy/{{ item.id }}/', {method: 'GET'})
+                .then(response => response.json())
+                .then(data => {
+                    if (data.id) {
+                        stripe.redirectToCheckout({ sessionId: data.id })
+                            .then(result => {
+                                if (result.error) {
+                                    alert('Error: ' + result.error.message);
+                                }
+                            });
+                    } else {
+                        alert('Error: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Payment error occurred');
+                });
+        });
+    </script>
+</body>
+</html>
