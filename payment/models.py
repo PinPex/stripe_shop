@@ -43,6 +43,10 @@ class Order(models.Model):
     total_price = models.IntegerField(default=0, help_text="Price in cents (e.g., 1000 = 10.00)")
     created_at = models.DateTimeField(auto_now_add=True)
 
+    payment_intent_id = models.CharField(max_length=255, blank=True, null=True)
+    is_paid = models.BooleanField(default=False)
+    stripe_payment_status = models.CharField(max_length=50, blank=True, null=True)
+
     def update_total(self):
         items_sum = sum([item.price for item in self.items.all()])
         self.total_price = items_sum
