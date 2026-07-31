@@ -11,8 +11,12 @@
         .item-list li { padding: 10px 0; border-bottom: 1px solid #eee; }
         .total { font-size: 24px; font-weight: bold; margin-top: 20px; }
         button { background: #5469d4; color: white; border: none; padding: 12px 24px; 
-                 border-radius: 4px; font-size: 16px; cursor: pointer; }
+                 border-radius: 4px; font-size: 16px; cursor: pointer; width: 100%; }
         button:hover { background: #3f4c9a; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        #payment-message { margin-top: 20px; padding: 10px; border-radius: 4px; display: none; }
+        .error { color: #dc3545; background: #f8d7da; border: 1px solid #f5c6cb; }
+        .success { color: #28a745; background: #d4edda; border: 1px solid #c3e6cb; }
     </style>
 </head>
 <body>
@@ -30,31 +34,107 @@
             <p>Tax: {{ order.tax.name }} ({{ order.tax.percentage }}%)</p>
         {% endif %}
         <p class="total">Total: ${{ total|floatformat:2 }}</p>
+        
+        <div id="payment-element"></div>
         <button id="buy-button">Pay for Order</button>
+        <div id="payment-message"></div>
     </div>
 
     <script>
         const stripe = Stripe('{{ stripe_pub_key }}');
-        document.getElementById('buy-button').addEventListener('click', function() {
+        let elements = null;
+        let clientSecret = null;
+        
+        const buyButton = document.getElementById('buy-button');
+        const paymentMessage = document.getElementById('payment-message');
+        
+        function createPaymentElement(clientSecret) {
+            if (elements) {
+                elements.destroy();
+            }
+            
+            elements = stripe.elements({
+                clientSecret: clientSecret,
+                appearance: {
+                    theme: 'stripe',
+                    variables: {
+                        colorPrimary: '#5469d4',
+                        colorBackground: '#ffffff',
+                        colorText: '#30313d',
+                        fontFamily: 'Arial, sans-serif',
+                    },
+                },
+            });
+            
+            const paymentElement = elements.create('payment');
+            paymentElement.mount('#payment-element');
+        }
+        
+        buyButton.addEventListener('click', function() {
+            buyButton.disabled = true;
+            buyButton.textContent = 'Processing...';
+            paymentMessage.style.display = 'none';
+            
             fetch('/buy-order/{{ order.id }}/', {method: 'GET'})
                 .then(response => response.json())
                 .then(data => {
-                    if (data.id) {
-                        stripe.redirectToCheckout({ sessionId: data.id })
-                            .then(result => {
-                                if (result.error) {
-                                    alert('Error: ' + result.error.message);
-                                }
-                            });
+                    if (data.clientSecret) {
+                        clientSecret = data.clientSecret;
+                        createPaymentElement(clientSecret);
+                        buyButton.textContent = 'Confirm Payment';
+                        buyButton.disabled = false;
+                        
+                        buyButton.onclick = confirmPayment;
                     } else {
-                        alert('Error: ' + (data.error || 'Unknown error'));
+                        showMessage('Error: ' + (data.error || 'Unknown error'), 'error');
+                        buyButton.textContent = 'Pay for Order';
+                        buyButton.disabled = false;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Payment error occurred');
+                    showMessage('Payment error occurred', 'error');
+                    buyButton.textContent = 'Pay for Order';
+                    buyButton.disabled = false;
                 });
         });
+        
+        function confirmPayment() {
+            buyButton.disabled = true;
+            buyButton.textContent = 'Confirming...';
+            
+            stripe.confirmPayment({
+                elements: elements,
+                confirmParams: {
+                    return_url: '{{ request.scheme }}://{{ request.get_host }}/success/',
+                },
+                redirect: 'if_required',
+            })
+            .then(result => {
+                if (result.error) {
+                    showMessage(result.error.message, 'error');
+                    buyButton.disabled = false;
+                    buyButton.textContent = 'Confirm Payment';
+                } else {
+                    showMessage('Payment successful! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/success/';
+                    }, 1500);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('Payment confirmation failed', 'error');
+                buyButton.disabled = false;
+                buyButton.textContent = 'Confirm Payment';
+            });
+        }
+        
+        function showMessage(message, type) {
+            paymentMessage.textContent = message;
+            paymentMessage.className = type;
+            paymentMessage.style.display = 'block';
+        }
     </script>
 </body>
 </html>
